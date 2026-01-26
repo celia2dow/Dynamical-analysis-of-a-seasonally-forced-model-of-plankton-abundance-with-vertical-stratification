@@ -1,0 +1,139 @@
+function Xruns = makeAndSaveBifurcationPlot(Xstore_wStability, var_num, tolX, vec, ...
+    colX, lwidth, fontSize, params, dimsPlot, folder_path)
+% Function for creating the bifurcaiton plot of compartment X and saving
+% the resulting figure with inputs:
+%   Xstore_wStability (structure storing unique, ordered values and stabilities of long-term solutions for fsolve and ode45 solutions),
+%   var_num (integer corresponding to the state variable under investigation: 1 for N, 2 for P, 3 for Z),
+%   tolX (the threshold difference beyond which it is deemed that a jump has occured),
+%   vec (array of parameter values for bifurcation parameter),
+%   colX (colour associated with comaprtment X),
+%   lwidth (width of plot line),
+%   fontSize (size of font in figure)
+%   params (structure for parameters),
+%   dims (dimensions desired for figure)
+%   and folder_path (directory in which to save figure),
+% and outputs:
+%   Xruns (structure storing sequential runs of stable and unstable solutions).
+    
+    % PREPARE FIGURE HANDLES
+    figX = figure(var_num); 
+    box on
+    hold on
+    
+    % Stationary points
+    [Xruns.stable.sol_1, nRuns.stable.sol_1] = collectFpSequences(Xstore_wStability.stable.sol_1, tolX);
+    [Xruns.unstable.sol_1, nRuns.unstable.sol_1] = collectFpSequences(Xstore_wStability.unstable.sol_1, tolX);
+    [Xruns.stable.sol_ss2, nRuns.stable.sol_ss2] = collectFpSequences(Xstore_wStability.stable.sol_ss2, tolX);
+    [Xruns.unstable.sol_ss2, nRuns.unstable.sol_ss2] = collectFpSequences(Xstore_wStability.unstable.sol_ss2, tolX);
+
+    % Keep track 
+    Xmax = 0;
+    minRunLen = 4;
+    % firstExtinct = find(params.Phi_vec<=0,1);
+    % lastExtinct = length(vec);
+
+    % Plot stable stationary points
+    for i = 1:nRuns.stable.sol_1
+        stableRun1 = Xruns.stable.sol_1{i};
+        indxPreExtinct = stableRun1(:,1) >= 0; % indxPreExtinct = stableRun1(:,1) <= vec(firstExtinct);
+        if size(stableRun1,1) <= minRunLen
+            continue
+        end
+        plot(stableRun1(indxPreExtinct,1), stableRun1(indxPreExtinct,2), ...
+            'Color', colX, 'LineStyle', '-', 'LineWidth', lwidth);
+        Xmax = max(Xmax, max(stableRun1(:,2),[],'all'));
+    end
+
+    for i = 1:nRuns.stable.sol_ss2
+        stableRun2 = Xruns.stable.sol_ss2{i};
+        indxPreExtinct = stableRun2(:,1) >= 0; % indxPreExtinct = stableRun2(:,1) <= vec(firstExtinct);
+        if size(stableRun2,1) <= minRunLen
+            continue
+        end
+        plot(stableRun2(indxPreExtinct,1), stableRun2(indxPreExtinct,2), ...
+            'Color', colX, 'LineStyle', '-', 'LineWidth', lwidth);
+        Xmax = max(Xmax, max(stableRun2(:,2),[],'all'));
+    end
+
+    % Plot unstable stationary points
+    for i = 1:nRuns.unstable.sol_1
+        unstableRun1 = Xruns.unstable.sol_1{i};
+        indxPreExtinct = unstableRun1(:,1) >= 0; % indxPreExtinct = unstableRun1(:,1) <= vec(firstExtinct);
+        if size(unstableRun1,1) <= minRunLen
+            continue
+        end
+        plot(unstableRun1(indxPreExtinct,1), unstableRun1(indxPreExtinct,2), ...
+            'Color', colX, 'LineStyle', ':', 'LineWidth', lwidth);
+        Xmax = max(Xmax, max(unstableRun1(:,2),[],'all'));
+    end
+
+    for i = 1:nRuns.unstable.sol_ss2
+        unstableRun2 = Xruns.unstable.sol_ss2{i};
+        indxPreExtinct = unstableRun2(:,1) >= 0; %indxPreExtinct = unstableRun2(:,1) <= vec(firstExtinct);
+        if size(unstableRun2,1) <= minRunLen
+            continue
+        end
+        plot(unstableRun2(indxPreExtinct,1), unstableRun2(indxPreExtinct,2), ...
+            'Color', colX, 'LineStyle', ':', 'LineWidth', lwidth);
+        Xmax = max(Xmax, max(unstableRun2(:,2),[],'all'));
+    end
+
+    % Plot minimum of stable limit cycle
+    plot(Xstore_wStability.stable.sol_lc2(:,1), ...
+        Xstore_wStability.stable.sol_lc2(:,2), ...
+        'Color', colX, 'LineStyle', 'none', ...
+        'Marker','.','MarkerSize',5*lwidth);
+            
+    % Plot maximum of stable limit cycle
+    plot(Xstore_wStability.stable.sol_lc2(:,1), ...
+        Xstore_wStability.stable.sol_lc2(:,3), ...
+        'Color', colX, 'LineStyle', 'none', ...
+        'Marker','.','MarkerSize',5*lwidth);
+    Xmax = max(Xmax, max(Xstore_wStability.stable.sol_lc2(:,2:3),[],'all'));
+    
+    % Plot plankton extinction solution
+    if var_num == 1
+        extinctVal = params.N_0;
+    else
+        extinctVal = 0;
+    end
+
+    % plot(vec([1,firstExtinct]), extinctVal*ones(1,2),...
+    %     'Color', colX, 'LineStyle', ':', 'LineWidth', lwidth);
+    % plot(vec([firstExtinct,lastExtinct]), extinctVal * ones(1,2),...
+    %     'Color', colX, 'LineStyle', '-', 'LineWidth', lwidth);
+    % plot(vec(firstExtinct)*ones(1.2),[-0.1*Xmax, 1.1*Xmax],...
+    %     'Color', [0.6510 0.6510 0.6510], 'LineStyle', '-', 5*lwidth);
+
+    % Finalise formatting
+    hold off
+    xlim([0,365.25])%xlim([vec(1),vec(end)])
+    ylim([-0.1*Xmax, 1.1*Xmax])
+    xlabel('$t$ (days)')%xlabel('$r$ (1/day)') % CHANGE DEPENDING ON WHICH BIFURCATION PLOT
+    ylabel("Concentration (g C/m$^3$)")
+    set(figX, 'Units', 'centimeters', 'OuterPosition', dimsPlot)
+    fontsize(fontSize,'points')
+    
+    % Add axis for equivalent bifurcation parameter Phi
+    % axisCurrent = gca; 
+    % addTopXAxis(axisCurrent, 'expression', ...
+    %     '(params.a*params.N_0/(params.b*(params.e+params.N_0))-params.s-params.k)-argu', ...
+    %     'xLabStr', '$\Phi$ (1/day)', 'xTickLabelFormat','%4.2f');
+    % fontsize(fontSize,'points')
+    
+    % Select compartment variable: N, P, or Z
+    if var_num == 1
+        varX = "N";
+    elseif var_num == 2
+        varX = "P";
+    elseif var_num == 3
+        varX = "Z";
+    end
+
+    exportgraphics(figX,folder_path + "/bifurcation_r_" + ... % CHANGE DEPENDING ON WHICH BIFURCATION PLOT
+        varX + "_vertStrat" + num2str(params.vert_strat) + ...
+        "_changeMLD" + num2str(params.changing_MLD) + ...
+        ".pdf",'ContentType','vector','BackgroundColor','none')
+
+    figure(var_num)
+end
