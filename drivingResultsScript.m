@@ -24,9 +24,9 @@ rng(1)                                          % Seed the random number generat
 bi_frac = 0.95;                                 % Fraction of time-points discarded as burn-in       
 
 % MODEL CHOICES: on == 1, off == 0
-params.vert_strat = 0;
-params.changing_MLD = 0;
-params.num_reps = 100;                           % Number of years
+params.vert_strat = 1;
+params.changing_MLD = 1;
+params.num_reps = 10;                           % Number of years
 params.num_days = params.num_reps*365.25;       % Number of days in year
 params.days = 0:params.num_days-1;              % Array of days for solving
 
@@ -99,6 +99,7 @@ col.zoop_blue = [0.0275 0.4471 0.9294];
 N0s = 0.4; % N in [0.2, 0.4] g C / m^3
 P0s = 0.1; % P in [0.05, 0.1] g C / m^3
 Z0s = 0.05; % Z in [0.05, 0.055] g C / m^3
+y0=[N0s,P0s,Z0s];
 
 % SOLVE FOR ODE CONCENTRATIONS
 [t,y] = ode45(@(t,x) odefunc(t,x,params),...
@@ -300,9 +301,9 @@ for param_i = 1:len_vec
     end
 
     % DETERMINE SOLUTION STABILITY
-    Nstore_wStability = collectSolsPerBifurcVal(Nstore, param_i, tol, vec, Nstore_wStability,1);
-    Pstore_wStability = collectSolsPerBifurcVal(Pstore, param_i, tol, vec, Pstore_wStability,2);
-    Zstore_wStability = collectSolsPerBifurcVal(Zstore, param_i, tol, vec, Zstore_wStability,3);
+    Nstore_wStability = collectSolsPerBifurcVal(Nstore, param_i, tol, vec, Nstore_wStability);
+    Pstore_wStability = collectSolsPerBifurcVal(Pstore, param_i, tol, vec, Pstore_wStability);
+    Zstore_wStability = collectSolsPerBifurcVal(Zstore, param_i, tol, vec, Zstore_wStability);
 end
 
 % PLOT BIFURCATION DIAGRAMS
@@ -313,7 +314,7 @@ Pruns = makeAndSaveBifurcationPlot(Pstore_wStability, 2, tolP, vec, ...
     col.phyto_green, lwidth, fontSize, params, dims_smaller, folder_path);
 Zruns = makeAndSaveBifurcationPlot(Zstore_wStability, 3, tolZ, vec, ...
     col.zoop_blue, lwidth, fontSize, params, dims_smaller, folder_path);
-
+%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BIFURCATION DIAGRRAM SEASONALLY FORCED
 % PREPARE INITIAL CONDITION
 num_ICs = 30;

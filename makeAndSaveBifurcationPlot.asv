@@ -29,14 +29,13 @@ function Xruns = makeAndSaveBifurcationPlot(Xstore_wStability, var_num, tolX, ve
     % Keep track 
     Xmax = 0;
     minRunLen = 4;
-    %firstExtinct = find(params.Phi_vec<=0,1); % COMMENT OUT IF RUNNING THIRD CODE-CHUNK
-    %lastExtinct = length(vec); % COMMENT OUT IF RUNNING THIRD CODE-CHUNK
+    % firstExtinct = find(params.Phi_vec<=0,1); % COMMENT OUT IF RUNNIG
+    % lastExtinct = length(vec);
 
     % Plot stable stationary points
     for i = 1:nRuns.stable.sol_1
         stableRun1 = Xruns.stable.sol_1{i};
-        %indxPreExtinct = stableRun1(:,1) <= vec(firstExtinct); % COMMENT OUT IF RUNNING THIRD CODE-CHUNK
-        indxPreExtinct = stableRun1(:,1) >= 0; % COMMENT OUT IF RUNNING SECOND CODE-CHUNK
+        indxPreExtinct = stableRun1(:,1) >= 0; % indxPreExtinct = stableRun1(:,1) <= vec(firstExtinct);
         if size(stableRun1,1) <= minRunLen
             continue
         end
@@ -47,8 +46,7 @@ function Xruns = makeAndSaveBifurcationPlot(Xstore_wStability, var_num, tolX, ve
 
     for i = 1:nRuns.stable.sol_ss2
         stableRun2 = Xruns.stable.sol_ss2{i};
-        %indxPreExtinct = stableRun2(:,1) <= vec(firstExtinct); % COMMENT OUT IF RUNNING THIRD CODE-CHUNK
-        indxPreExtinct = stableRun2(:,1) >= 0; % COMMENT OUT IF RUNNING SECOND CODE-CHUNK
+        indxPreExtinct = stableRun2(:,1) >= 0; % indxPreExtinct = stableRun2(:,1) <= vec(firstExtinct);
         if size(stableRun2,1) <= minRunLen
             continue
         end
@@ -60,8 +58,7 @@ function Xruns = makeAndSaveBifurcationPlot(Xstore_wStability, var_num, tolX, ve
     % Plot unstable stationary points
     for i = 1:nRuns.unstable.sol_1
         unstableRun1 = Xruns.unstable.sol_1{i};
-        %indxPreExtinct = unstableRun1(:,1) <= vec(firstExtinct); % COMMENT OUT IF RUNNING THIRD CODE-CHUNK
-        indxPreExtinct = unstableRun1(:,1) >= 0; % COMMENT OUT IF RUNNING SECOND CODE-CHUNK
+        indxPreExtinct = unstableRun1(:,1) >= 0; % indxPreExtinct = unstableRun1(:,1) <= vec(firstExtinct);
         if size(unstableRun1,1) <= minRunLen
             continue
         end
@@ -72,8 +69,7 @@ function Xruns = makeAndSaveBifurcationPlot(Xstore_wStability, var_num, tolX, ve
 
     for i = 1:nRuns.unstable.sol_ss2
         unstableRun2 = Xruns.unstable.sol_ss2{i};
-        %indxPreExtinct = unstableRun2(:,1) <= vec(firstExtinct); % COMMENT OUT IF RUNNING THIRD CODE-CHUNK
-        indxPreExtinct = unstableRun2(:,1) >= 0; % COMMENT OUT IF RUNNING SECOND CODE-CHUNK
+        indxPreExtinct = unstableRun2(:,1) >= 0; %indxPreExtinct = unstableRun2(:,1) <= vec(firstExtinct);
         if size(unstableRun2,1) <= minRunLen
             continue
         end
@@ -111,16 +107,14 @@ function Xruns = makeAndSaveBifurcationPlot(Xstore_wStability, var_num, tolX, ve
 
     % Finalise formatting
     hold off
-    %xlim([vec(1),vec(end)]) % COMMENT OUT IF RUNNING THIRD CODE-CHUNK
-    xlim([0,365.25]) % COMMENT OUT IF RUNNING SECOND CODE-CHUNK
+    xlim([vec(1),vec(end)])%xlim([0,365.25])% % CHANGE DEPENDING ON WHICH BIFURCATION PLOT
     ylim([-0.1*Xmax, 1.1*Xmax])
-    %xlabel('$r$ (1/day)') % COMMENT OUT IF RUNNING THIRD CODE-CHUNK
-    xlabel('$t$ (days)') % COMMENT OUT IF RUNNING SECOND CODE-CHUNK
+    xlabel('$r$ (1/day)')%xlabel('$t$ (days)')% % CHANGE DEPENDING ON WHICH BIFURCATION PLOT
     ylabel("Concentration (g C/m$^3$)")
     set(figX, 'Units', 'centimeters', 'OuterPosition', dimsPlot)
     fontsize(fontSize,'points')
     
-    % Add axis for equivalent bifurcation parameter Phi % COMMENT OUT IF RUNNING THIRD CODE-CHUNK
+    % Add axis for equivalent bifurcation parameter Phi
     % axisCurrent = gca; 
     % addTopXAxis(axisCurrent, 'expression', ...
     %     '(params.a*params.N_0/(params.b*(params.e+params.N_0))-params.s-params.k)-argu', ...
