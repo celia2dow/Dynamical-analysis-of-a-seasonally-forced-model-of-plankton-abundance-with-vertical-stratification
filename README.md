@@ -1,4 +1,4 @@
-# Dynamical-analysis-of-a-seasonally-forced-model-of-plankton-abundance-with-vertical-stratification
+# Dynamical analysis of a seasonally forced model of plankton abundance with vertical stratification
 Repository of code used to generate Figures 3 and 4 in the same-named article for the StAMPS 2026 Magazine (Issue 2). The driving script is `drivingResultsScript` which calls all other functions.
 
 - To initialise parameters: run the 1<sup>st</sup> code-chunk of `drivingResultsScript`.
