@@ -8,6 +8,6 @@ Repository of code used to generate Figures 3 and 4 in the same-named article fo
 
 Some adjustments may need to be made to the code and the output to account for non-converging `ode45` time-series solutions and erroneous `fsolve` equilibria.
 
-This work is an excerpt of my masters thesis entitled *Investigating the distribution of plankton using a seasonally forced model with ocean dynamics* (2023) which is included herein.
+This work is an excerpt of my masters thesis entitled *Investigating the distribution of plankton using a seasonally forced model with ocean dynamics* (2023) which is included herein. The [NPZD_models_thesisCD](https://github.com/celia2dow/NPZD_models_thesisCD) repository contains the code used in my thesis.
 
 Please contact me if any questions arise.
